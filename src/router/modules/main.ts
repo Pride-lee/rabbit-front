@@ -22,7 +22,7 @@ export const main: Array<RouteRecordRaw> = [
   {
     path: '/user',
     name: 'category',
-    component: () => import('@/views/category/index.vue'),
+    component: () => import('@/views/user/index.vue'),
     meta: {
       title: '个人中心',
       icon: 'contact-o',

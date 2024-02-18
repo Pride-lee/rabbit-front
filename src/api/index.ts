@@ -1,9 +1,16 @@
 import request from '@/utils/request';
 
-// 获取信息
+// 获取title
 export function getTitle() {
   return request({
     url: '/api/Title',
+    method: 'get',
+  });
+}
+//获取版本
+export function getVersion() {
+  return request({
+    url: '/api/version',
     method: 'get',
   });
 }
