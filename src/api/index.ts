@@ -1,3 +1,4 @@
+import { versionResult } from './models/indexModel';
 import request from '@/utils/request';
 
 // 获取title
@@ -9,7 +10,7 @@ export function getTitle() {
 }
 //获取版本
 export function getVersion() {
-  return request({
+  return request<versionResult>({
     url: '/api/version',
     method: 'get',
   });

@@ -3,7 +3,6 @@ import qs from 'qs';
 import { closeToast, showFailToast, showLoadingToast, showToast } from 'vant';
 import { ContentTypeEnum } from './httpEnum';
 import { useUserStore } from '@/store/modules/user';
-import router from '@/router';
 
 // create an axios instance
 const service = axios.create({
@@ -60,16 +59,8 @@ service.interceptors.response.use(
   (response) => {
     closeToast(true);
     const res = response.data;
-    console.log('res', res);
-    if (res.code && res.message && !res.success) {
-      if (res.code === 401) {
-        // store.dispatch('FedLogOut').then(() => {
-        //   location.reload()
-        // })
-        router.replace('/error');
-      } else {
-        showToast(res.message);
-      }
+    if (res.message && !res.success && res.message != "'img'") {
+      showToast(res.message);
       return Promise.reject(res || 'error');
     } else {
       return Promise.resolve(response);
