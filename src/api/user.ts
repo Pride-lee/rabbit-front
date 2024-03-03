@@ -13,3 +13,10 @@ export function getUserId(data: LoginParams) {
     data,
   });
 }
+// 获取信息
+export function getUserInfo() {
+  return request({
+    url: '/api//api/User',
+    method: 'get',
+  });
+}
