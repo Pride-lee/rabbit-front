@@ -14,9 +14,9 @@ export function getUserId(data: LoginParams) {
   });
 }
 // 获取信息
-export function getUserInfo() {
+export function getUserInfo(params) {
   return request({
-    url: '/api//api/User',
+    url: `/api/User?user_index=${params.user_index}&container_id=${params.container_id}`,
     method: 'get',
   });
 }
