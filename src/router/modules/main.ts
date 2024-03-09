@@ -21,7 +21,7 @@ export const main: Array<RouteRecordRaw> = [
   // },
   {
     path: '/user',
-    name: 'category',
+    name: 'user',
     component: () => import('@/views/user/index.vue'),
     meta: {
       title: '个人中心',
