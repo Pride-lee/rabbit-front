@@ -52,3 +52,12 @@ export function getQr() {
     method: 'post',
   });
 }
+// 轮询
+export function qrCheck(data) {
+  return request({
+    url: '/api/QrCheck',
+    method: 'post',
+    hideLoading: true,
+    data,
+  });
+}

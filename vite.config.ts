@@ -91,10 +91,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: 8888,
       proxy: {
         '/api': {
-          // 免费的在线REST API
-          target: 'http://jsonplaceholder.typicode.com',
+          target: 'http://jdc.zzux.com:572',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
     },

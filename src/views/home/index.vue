@@ -118,9 +118,9 @@
 <script lang="ts" setup>
   import { ref, reactive, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  const router = useRouter();
-  import { Storage } from '@/utils/Storage';
+  import { showToast } from 'vant';
   import { copyToClipboard } from '@/utils';
+  import { Storage } from '@/utils/Storage';
   import {
     sendCode,
     VerifyCode,
@@ -129,8 +129,9 @@
     getVersion,
     AutoCaptcha,
     getQr,
+    qrCheck,
   } from '@/api/index';
-  import { showToast } from 'vant';
+  const router = useRouter();
   defineOptions({ name: 'Home' });
   const active = ref<any>(0);
   const disabled = ref<any>(false);
@@ -222,6 +223,20 @@
         imgShow.value = false;
         copyToClipboard(qrData.jcommond, '口令已成功复制到剪贴板！请打开京东进行授权');
       }
+      // 每两秒查询一下扫码状态
+      const timerId = setInterval(() => {
+        qrCheck({ QRCodeKey: data.QRCodeKey, container_id: form.container_id }).then((res) => {
+          if (res.code == 502) {
+            clearInterval(timerId);
+            showToast(res.msg);
+          } else if (res.code == 57) {
+            clearInterval(timerId);
+            Storage.set('loginInfo', res);
+            showToast('登录成功');
+            router.push({ path: '/user' });
+          }
+        });
+      }, 3000);
     } catch (error) {
       showToast('发生错误：' + error);
     }
