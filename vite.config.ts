@@ -90,9 +90,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     server: {
       port: 8888,
       proxy: {
-        '/api': {
-          target: 'http://jdc.zzux.com:572',
+        '/faker': {
+          // target: 'http://jdc.zzux.com:572',
+          target: 'http://192.168.1.84:12580',
           changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/faker/, ''),
         },
       },
     },

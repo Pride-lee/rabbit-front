@@ -22,6 +22,23 @@ export function getConfig() {
     method: 'get',
   });
 }
+
+// 账号密码登录
+export function postPw(data) {
+  return request({
+    url: '/faker/login',
+    method: 'post',
+    data,
+  });
+}
+// 查询账密登录情况
+export function checkPw(data) {
+  return request({
+    url: '/faker/check',
+    method: 'post',
+    data,
+  });
+}
 // 获取验证码
 export function sendCode(data) {
   return request({

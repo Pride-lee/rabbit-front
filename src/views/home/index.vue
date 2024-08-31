@@ -5,14 +5,52 @@
       <span class="version"> {{ version }}</span>
     </div>
     <div class="content">
+      <div class="info">
+        <van-tag type="success">ck容量：{{ containerInfo.ckcount }}</van-tag>
+        <van-tag type="warning">占用资源：{{ containerInfo.totalcount }}</van-tag>
+        <van-tag type="primary">剩余资源：{{ containerInfo.tabcount }}</van-tag>
+      </div>
       <van-tabs v-model="active">
+        <!-- -------------------------------   ↓密码登录   ------------------------------- -->
+        <van-tab>
+          <template #title> <van-icon name="closed-eye" />密码登录 </template>
+
+          <van-form @submit="onSubmit">
+            <van-field
+              v-model="pwForm.id"
+              clearable
+              type="number"
+              name="手机号"
+              placeholder="手机号"
+              :rules="[
+                { required: true, message: '请填写手机号' },
+                { pattern: /^1[3456789]\d{9}$/, message: '手机号格式不正确' },
+              ]"
+            />
+            <van-field
+              v-model="pwForm.pw"
+              clearable
+              name="密码"
+              placeholder="密码"
+              :rules="[{ required: true, message: '请填写密码' }]"
+            >
+            </van-field>
+            <div style="margin: 16px 0">
+              <!-- <van-button type="primary" round block native-type="submit">提交</van-button> -->
+              <van-button
+                type="primary"
+                color="linear-gradient(to bottom, #347AFF, #1772ff)"
+                @click="pwLogin"
+                block
+                >提 交</van-button
+              >
+            </div>
+          </van-form>
+        </van-tab>
+        <!-- -------------------------------   ↓短信登录   ------------------------------- -->
         <van-tab>
           <template #title> <van-icon name="smile-comment-o" />短信登录 </template>
-          <div class="info">
-            <van-tag type="success">ck容量：{{ containerInfo.ckcount }}</van-tag>
-            <van-tag type="warning">占用资源：{{ containerInfo.totalcount }}</van-tag>
-            <van-tag type="primary">剩余资源：{{ containerInfo.tabcount }}</van-tag>
-          </div>
+
           <van-form @submit="onSubmit">
             <van-field
               v-model="selectName"
@@ -73,13 +111,10 @@
             </div>
           </van-form>
         </van-tab>
+        <!-- -------------------------------   ↓扫码登录   ------------------------------- -->
         <van-tab>
           <template #title> <van-icon name="scan" />扫码登录 </template>
-          <div class="info">
-            <van-tag type="success">ck容量：{{ containerInfo.ckcount }}</van-tag>
-            <van-tag type="warning">占用资源：{{ containerInfo.totalcount }}</van-tag>
-            <van-tag type="primary">剩余资源：{{ containerInfo.tabcount }}</van-tag>
-          </div>
+
           <van-field
             v-model="selectName"
             name="picker"
@@ -122,6 +157,8 @@
   import { copyToClipboard } from '@/utils';
   import { Storage } from '@/utils/Storage';
   import {
+    postPw,
+    checkPw,
     sendCode,
     VerifyCode,
     getConfig,
@@ -142,6 +179,7 @@
   const selectName = ref('');
   const imgShow = ref(false);
   const form = reactive({ Phone: '', Code: '', container_id: '' }); //要提交的参数
+  const pwForm = reactive({ id: '', pw: '' }); //要提交的参数
   const qrData = reactive({ QRCodeKey: '', code: '', jcommond: '', qr: '' }); //二维码登录的参数
   const customFieldName = {
     text: 'container_name',
@@ -197,7 +235,31 @@
       }
     }, 1000);
   };
-
+  const pwLogin = async () => {
+    const res: any = await postPw(pwForm);
+    console.log(res);
+    if (res.status !== 'pass') {
+      // Storage.set('loginInfo', res);
+      return showToast(res.msg);
+      // router.push({ path: '/user' });
+    }
+    showToast('正在登录，请稍后根据提示操作');
+    const timerId = setInterval(() => {
+      checkPw({ uid: res.uid }).then((res: any) => {
+        console.log('res', res);
+        if (res.status == 'error') {
+          clearInterval(timerId);
+          return showToast(res.msg);
+        }
+        if (res.code == 57) {
+          clearInterval(timerId);
+          Storage.set('loginInfo', res);
+          showToast('登录成功');
+          router.push({ path: '/user' });
+        }
+      });
+    }, 5000);
+  };
   // 提交验证码
   const onSubmit = async () => {
     const res: any = await VerifyCode(form);
